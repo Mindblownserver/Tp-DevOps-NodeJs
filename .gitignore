@@ -1,0 +1,18 @@
+# npm deps
+node_modules/
+
+# intelliJ files
+.idea/
+
+# Logs
+*.log
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Vscode
+.vscode/
+
+package-lock.json
+.env
