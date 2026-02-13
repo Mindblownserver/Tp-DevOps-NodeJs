@@ -298,3 +298,36 @@ exports.advancedSearch = async (req, res) => {
         }
     };
 
+exports.getEtudiantsSorted= async(req,res)=>{
+    // Retourne les étudiants triés par moyenne décroissante.
+    // Options query (facultatif) :
+    //   filiere - filtrer par filière
+    //   limit   - nombre maximum de résultats
+    //   page    - pagination (1-based)
+    try {
+        const { filiere, limit, page } = req.query;
+        const filter = {};
+        if (filiere) filter.filiere = filiere;
+
+        const perPage = limit ? Math.max(parseInt(limit, 10), 0) : 0;
+        const pageNum = page ? Math.max(parseInt(page, 10), 1) : 1;
+        const skip = perPage ? perPage * (pageNum - 1) : 0;
+
+        let query = Etudiant.find(filter).sort({ moyenne: -1 });
+        if (perPage) query = query.limit(perPage).skip(skip);
+
+        const etudiants = await query;
+        res.status(200).json({
+            success: true,
+            count: etudiants.length,
+            filters: req.query,
+            data: etudiants
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Erreur serveur',
+            error: error.message
+        });
+    }
+}
