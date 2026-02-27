@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  jest:
+    image: jest-tp:latest
+    volumes:
+     - ./config:/app/config
+     - ./controllers:/app/controllers
+     - ./models:/app/models
+     - ./routes:/app/routes
+     - ./utils:/app/utils
+     - ./.env:/app/.env
+     - ./server.js:/app/server.js
+     - ./__test__:/app/__test__
+
+    
