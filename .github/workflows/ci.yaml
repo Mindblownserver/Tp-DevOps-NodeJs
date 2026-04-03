@@ -1,6 +1,6 @@
 name: CI Test 
 # github.event_name ?
-run-name: ${{ github.actor }} did ${{ github.action }} on ${{ github.action_repository }} of ${{ github.action_status }} status
+run-name: ${{ github.actor }} did ${{ github.event_name }} test
 ## Workflow (CI) trigger 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           cache: 'npm'
       
       - name: Install node modules # npm ci
-        run: npm ci
+        run: npm install
       
       - name: Start testing :)
         run: npm run test
