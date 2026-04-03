@@ -14,6 +14,12 @@ on:
 jobs:
   flip-test:
     runs-on: ubuntu-slim 
+    ## Matrix Strategie: Test on mulitple node versions
+    strategy:
+      matrix:
+        node-version: [18, 20, '22.17.0']
+      fail-fast: false # if one fails, the others continue
+    name: Tests Nodejs server ${{ matrix.node-version }}
     steps:
       - name: Checkout clone # clones repo
         uses: actions/checkout@v6
