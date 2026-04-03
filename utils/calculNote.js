@@ -10,7 +10,7 @@ function additionner(a, b) {
  */
 function isValidMoyenne(valeur) {
   if (typeof valeur !== 'number' || isNaN(valeur)) return false;
-  return valeur >= 0 && valeur <= 20;
+  return valeur >= 10 && valeur <= 20; // return valeur >= 0 && valeur <= 20;
 }
 
 function calculMention(moyenne) {
