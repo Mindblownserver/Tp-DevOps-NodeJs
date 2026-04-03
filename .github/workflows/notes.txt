@@ -1,0 +1,139 @@
+Selects an action to run as part of a step in your job. An action is a reusable unit of code. You can use an action defined in the same repository as the workflow, a public repository, or in a published Docker container image.
+
+The action is the value you provide in the uses filed within steps. Not all steps use actions but every action is a step...
+We strongly recommend that you include the version of the action you are using by specifying a Git ref, SHA, or Docker tag. If you don't specify a version, it could break your workflows or cause unexpected behavior when the action owner publishes an update.
+
+    Using the commit SHA of a released action version is the safest for stability and security.
+    If the action publishes major version tags, you should expect to receive critical fixes and security patches while still retaining compatibility. Note that this behavior is at the discretion of the action's author.
+    Using the default branch of an action may be convenient, but if someone releases a new major version with a breaking change, your workflow could break.
+
+Some actions require inputs that you must set using the with keyword. Review the action's README file to determine the inputs required.
+
+Actions are either JavaScript files or Docker containers. If the action you're using is a Docker container you must run the job in a Linux environment. For more details, see runs-on.
+Example: Using versioned actions
+
+steps:
+  # Reference a specific commit
+  - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
+  # Reference the major version of a release
+  - uses: actions/checkout@v5
+  # Reference a specific version
+  - uses: actions/checkout@v5.2.0
+  # Reference a branch
+  - uses: actions/checkout@main
+
+Example: Using a public action
+
+{owner}/{repo}@{ref}
+
+You can specify a branch, ref, or SHA in a public GitHub repository.
+
+jobs:
+  my_first_job:
+    steps:
+      - name: My first step
+        # Uses the default branch of a public repository
+        uses: actions/heroku@main
+      - name: My second step
+        # Uses a specific version tag of a public repository
+        uses: actions/aws@v2.0.1
+
+Example: Using a public action in a subdirectory
+
+{owner}/{repo}/{path}@{ref}
+
+A subdirectory in a public GitHub repository at a specific branch, ref, or SHA.
+
+jobs:
+  my_first_job:
+    steps:
+      - name: My first step
+        uses: actions/aws/ec2@main
+
+Example: Using an action in the same repository as the workflow
+
+./path/to/dir
+
+The path to the directory that contains the action in your workflow's repository. You must check out your repository before using the action.
+
+Example repository file structure:
+
+|-- hello-world (repository)
+|   |__ .github
+|       └── workflows
+|           └── my-first-workflow.yml
+|       └── actions
+|           |__ hello-world-action
+|               └── action.yml
+
+The path is relative (./) to the default working directory (github.workspace, $GITHUB_WORKSPACE). If the action checks out the repository to a location different than the workflow, the relative path used for local actions must be updated.
+
+Example workflow file:
+
+jobs:
+  my_first_job:
+    runs-on: ubuntu-latest
+    steps:
+      # This step checks out a copy of your repository.
+      - name: My first step - check out repository
+        uses: actions/checkout@v5
+      # This step references the directory that contains the action.
+      - name: Use local hello-world-action
+        uses: ./.github/actions/hello-world-action
+
+Example: Using a Docker Hub action
+
+docker://{image}:{tag}
+
+A Docker image published on Docker Hub.
+
+jobs:
+  my_first_job:
+    steps:
+      - name: My first step
+        uses: docker://alpine:3.8
+
+Example: Using the GitHub Packages Container registry
+
+docker://{host}/{image}:{tag}
+
+A public Docker image in the GitHub Packages Container registry.
+
+jobs:
+  my_first_job:
+    steps:
+      - name: My first step
+        uses: docker://ghcr.io/OWNER/IMAGE_NAME
+
+Example: Using a Docker public registry action
+
+docker://{host}/{image}:{tag}
+
+A Docker image in a public registry. This example uses the Google Container Registry at gcr.io.
+
+jobs:
+  my_first_job:
+    steps:
+      - name: My first step
+        uses: docker://gcr.io/cloud-builders/gradle
+
+Example: Using an action inside a different private repository than the workflow
+
+Your workflow must checkout the private repository and reference the action locally. Generate a personal access token and add the token as a secret. For more information, see Managing your personal access tokens and Using secrets in GitHub Actions.
+
+Replace PERSONAL_ACCESS_TOKEN in the example with the name of your secret.
+
+jobs:
+  my_first_job:
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          repository: octocat/my-private-repo
+          ref: v1.0
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          path: ./.github/actions/my-private-repo
+      - name: Run my action
+        uses: ./.github/actions/my-private-repo/my-action
+
+Alternatively, use a GitHub App instead of a personal access token in order to ensure your workflow continues to run even if the personal access token owner leaves. For more information, see Making authenticated API requests with a GitHub App in a GitHub Actions workflow.

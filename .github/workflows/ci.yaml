@@ -1,0 +1,31 @@
+name: CI Test 
+# github.event_name ?
+run-name: ${{ github.actor }} did ${{ github.action }} on ${{ github.action_repository }} of ${{ github.action_status }} status
+## Workflow (CI) trigger 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+## Jobs
+jobs:
+  flip-test:
+    runs-on: ubuntu-slim 
+    steps:
+      - name: Checkout clone # clones repo
+        uses: actions/checkout@v6
+      
+      - name: Install node # installs node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22.17.0'
+          cache: 'npm'
+      
+      - name: Install node modules # npm ci
+        run: npm ci
+      
+      - name: Start testing :)
+        run: npm run test
