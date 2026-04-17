@@ -27,7 +27,7 @@ jobs:
       - name: Install node # installs node
         uses: actions/setup-node@v6
         with:
-          node-version: '22.17.0'
+          node-version: ${{matrix.node-version}}
           cache: "npm"
           cache-dependency-path: '**/package.json'
 
